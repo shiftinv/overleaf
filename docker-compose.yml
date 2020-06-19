@@ -1,10 +1,10 @@
 version: '2.2'
 services:
-    sharelatex:
+    overleaf:
         restart: always
         # Server Pro users:
         # image: quay.io/sharelatex/sharelatex-pro
-        image: sharelatex/sharelatex
+        image: shiftinv/overleaf
         container_name: sharelatex
         depends_on:
             mongo:

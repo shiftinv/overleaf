@@ -1,5 +1,5 @@
 # --------------------------------------------------
-# Overleaf Base Image (sharelatex/sharelatex-base)
+# Overleaf Base Image (shiftinv/overleaf-base)
 # --------------------------------------------------
 
 FROM phusion/baseimage:0.11
@@ -36,7 +36,7 @@ RUN npm install -g grunt-cli \
 #
 # # docker build \
 #     --build-arg TEXLIVE_MIRROR=http://ctan.crest.fr/tex-archive/systems/texlive/tlnet \
-#     -f Dockerfile-base -t sharelatex/sharelatex-base .
+#     -f Dockerfile-base -t shiftinv/overleaf-base .
 ARG TEXLIVE_MIRROR=http://mirror.ctan.org/systems/texlive/tlnet
 
 ENV PATH "${PATH}:/usr/local/texlive/2020/bin/x86_64-linux"
