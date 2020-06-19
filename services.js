@@ -13,10 +13,6 @@ module.exports =
 	repo: "https://github.com/sharelatex/document-updater-sharelatex.git",
 	version: "8969b79281fac734716f4d1ee7f4fa988af8b8e0"
 }, {
-	name: "clsi",
-	repo: "https://github.com/sharelatex/clsi-sharelatex.git",
-	version: "0d44fb704be9e4737b1e9dd7cd666105272c0a61"
-}, {
 	name: "filestore",
 	repo: "https://github.com/sharelatex/filestore-sharelatex.git",
 	version: "58bbb032bae42dd444d3f52f8ba828ba9f7ac3c7"
