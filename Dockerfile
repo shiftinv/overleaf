@@ -26,7 +26,7 @@ RUN apt-get update \
 # Install Grunt
 # ------------
 RUN npm install -g grunt-cli \
- && find /root/.cache /root/.npm /tmp /var/tmp -mindepth 1 -maxdepth 1 -exec rm -rf "{}" +
+ && find /root/.npm /tmp /var/tmp -mindepth 1 -maxdepth 1 -exec rm -rf "{}" +
 
 
 # Set up sharelatex user and home directory
@@ -77,7 +77,7 @@ RUN cd /var/www/sharelatex \
   \
 # Cleanup not needed artifacts
 # ----------------------------
- && find /root/.cache /root/.npm /root/.node-gyp /tmp /var/tmp -mindepth 1 -maxdepth 1 -exec rm -rf "{}" + \
+ && find /root/.cache /root/.npm /tmp /var/tmp -mindepth 1 -maxdepth 1 -exec rm -rf "{}" + \
 # Stores the version installed for each service
 # ---------------------------------------------
  && cd /var/www \
