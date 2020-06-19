@@ -94,12 +94,13 @@ RUN cd /var/www/sharelatex \
   \
 # Cleanup not needed artifacts
 # ----------------------------
- && find /root/.cache /root/.npm /root/.node-gyp /tmp /var/tmp -mindepth 1 -maxdepth 1 -exec rm -rf "{}" +
+ && find /root/.cache /root/.npm /tmp /var/tmp -mindepth 1 -maxdepth 1 -exec rm -rf "{}" +
 
 # Compile CoffeeScript
 # --------------------
 RUN cd /var/www/sharelatex \
- && bash ./bin/compile-services
+ && bash ./bin/compile-services \
+ && find /root/.cache /root/.npm /tmp /var/tmp -mindepth 1 -maxdepth 1 -exec rm -rf "{}" +
 
 
 # Copy runit service startup scripts to its location
