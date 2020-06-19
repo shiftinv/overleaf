@@ -1,10 +1,5 @@
-# Makefile
-
-OVERLEAF_TAG := shiftinv/overleaf
-
-
-build-community:
-	docker build -f Dockerfile -t $(OVERLEAF_TAG) .
+build:
+	docker build -f Dockerfile -t shiftinv/overleaf .
 
 
-PHONY: build-community
+PHONY: build
