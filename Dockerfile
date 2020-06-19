@@ -1,9 +1,85 @@
-# ---------------------------------------------
-# Overleaf Community Edition (overleaf/overleaf)
-# ---------------------------------------------
+# --------------------------------------------------
+# Overleaf Base Image
+# --------------------------------------------------
 
-ARG OVERLEAF_BASE_TAG=shiftinv/overleaf-base:latest
-FROM $OVERLEAF_BASE_TAG
+FROM phusion/baseimage:0.11
+
+ENV baseDir .
+
+
+# Install dependencies
+# --------------------
+RUN apt-get update \
+ && apt-get install -y \
+      build-essential wget net-tools unzip time imagemagick optipng strace nginx git python zlib1g-dev libpcre3-dev \
+      qpdf \
+      aspell aspell-* \
+    \
+# install Node.JS 10
+ && curl -sSL https://deb.nodesource.com/setup_10.x | bash - \
+ && apt-get install -y nodejs \
+    \
+ && rm -rf \
+      /etc/nginx/nginx.conf \
+      /etc/nginx/sites-enabled/default \
+ && find /var/lib/apt/lists/ /tmp/ /var/tmp/ -mindepth 1 -maxdepth 1 -exec rm -rf "{}" +
+
+# Install Grunt
+# ------------
+RUN npm install -g grunt-cli \
+ && rm -rf /root/.npm
+
+# Install TexLive
+# ---------------
+# CTAN mirrors occasionally fail, in that case install TexLive against an
+# specific server, for example http://ctan.crest.fr
+#
+# # docker build \
+#     --build-arg TEXLIVE_MIRROR=http://ctan.crest.fr/tex-archive/systems/texlive/tlnet \
+#     -f Dockerfile -t shiftinv/overleaf .
+ARG TEXLIVE_MIRROR=http://mirror.ctan.org/systems/texlive/tlnet
+
+ENV PATH "${PATH}:/usr/local/texlive/2020/bin/x86_64-linux"
+
+RUN mkdir /install-tl-unx \
+ && curl -sSL \
+      ${TEXLIVE_MIRROR}/install-tl-unx.tar.gz \
+    | tar -xzC /install-tl-unx --strip-components=1 \
+    \
+ && echo "tlpdbopt_autobackup 0" >> /install-tl-unx/texlive.profile \
+ && echo "tlpdbopt_install_docfiles 0" >> /install-tl-unx/texlive.profile \
+ && echo "tlpdbopt_install_srcfiles 0" >> /install-tl-unx/texlive.profile \
+ && echo "selected_scheme scheme-basic" >> /install-tl-unx/texlive.profile \
+    \
+ && /install-tl-unx/install-tl \
+      -profile /install-tl-unx/texlive.profile \
+      -repository ${TEXLIVE_MIRROR} \
+    \
+ && tlmgr install --repository ${TEXLIVE_MIRROR} \
+      latexmk \
+      texcount \
+    \
+ && rm -rf /install-tl-unx
+
+
+# Set up sharelatex user and home directory
+# -----------------------------------------
+RUN adduser --system --group --home /var/www/sharelatex --no-create-home sharelatex \
+ && mkdir -p /var/lib/sharelatex \
+ && chown www-data:www-data /var/lib/sharelatex \
+ && mkdir -p /var/log/sharelatex \
+ && chown www-data:www-data /var/log/sharelatex \
+ && mkdir -p /var/lib/sharelatex/data/template_files \
+ && chown www-data:www-data /var/lib/sharelatex/data/template_files
+
+
+
+
+
+
+# ---------------------------------------------
+# Overleaf Community Edition
+# ---------------------------------------------
 
 ENV SHARELATEX_CONFIG /etc/sharelatex/settings.coffee
 
