@@ -2,8 +2,8 @@ module.exports =
 
 [{
 	name: "web",
-	repo: "https://github.com/sharelatex/web-sharelatex.git",
-	version: "25e741f58937689ca3586e10f773a9562f41ede7"
+	repo: "https://github.com/shiftinv/overleaf-web.git",
+	version: "dev"
 }, {
 	name: "real-time",
 	repo: "https://github.com/sharelatex/real-time-sharelatex.git",

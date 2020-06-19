@@ -137,6 +137,10 @@ COPY ${baseDir}/init_scripts/ /etc/my_init.d/
 # -----------------------
 COPY ${baseDir}/settings.coffee /etc/sharelatex/settings.coffee
 
+# Add empty template list
+# -----------------------
+RUN echo "{}" >> /etc/sharelatex/templates.json
+
 # Set Environment Variables
 # --------------------------------
 ENV WEB_API_USER "sharelatex"
