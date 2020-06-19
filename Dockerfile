@@ -27,7 +27,7 @@ RUN apt-get update \
 # Install Grunt
 # ------------
 RUN npm install -g grunt-cli \
- && rm -rf /root/.npm
+ && find /root/.cache /root/.npm /tmp /var/tmp -mindepth 1 -maxdepth 1 -exec rm -rf "{}" +
 
 # Install TexLive
 # ---------------
@@ -110,7 +110,7 @@ RUN cd /var/www/sharelatex \
   \
 # Cleanup not needed artifacts
 # ----------------------------
- && rm -rf /root/.cache /root/.npm $(find /tmp/ -mindepth 1 -maxdepth 1) \
+ && find /root/.cache /root/.npm /root/.node-gyp /tmp /var/tmp -mindepth 1 -maxdepth 1 -exec rm -rf "{}" + \
 # Stores the version installed for each service
 # ---------------------------------------------
  && cd /var/www \
@@ -127,7 +127,7 @@ RUN cd /var/www/sharelatex \
   \
 # Cleanup not needed artifacts
 # ----------------------------
- && rm -rf /root/.cache /root/.npm $(find /tmp/ -mindepth 1 -maxdepth 1)
+ && find /root/.cache /root/.npm /root/.node-gyp /tmp /var/tmp -mindepth 1 -maxdepth 1 -exec rm -rf "{}" +
 
 # Compile CoffeeScript
 # --------------------
