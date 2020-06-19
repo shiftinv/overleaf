@@ -5,18 +5,28 @@ services:
         container_name: overleaf
         restart: unless-stopped
         depends_on:
+            clsi:
+                condition: service_started
             mongo:
                 condition: service_healthy
             redis:
                 condition: service_started
         links:
+            - clsi
             - mongo
             - redis
         ports:
             - '127.0.0.1:7437:80'
+        expose:
+            - 3009  # filestore
         volumes:
             - data:/var/lib/sharelatex
         environment:
+            # [required for clsi connection]
+            CLSI_HOST: 'clsi'
+            FILESTORE_HOST: 'overleaf'  # passed to clsi
+            LISTEN_ADDRESS: '0.0.0.0'  # allow clsi to access filestore
+
             # General options
             # Same property, unfortunately with different names in different locations
             SHARELATEX_REDIS_HOST: 'redis'
@@ -54,6 +64,19 @@ services:
             # SHARELATEX_EMAIL_SMTP_TLS_REJECT_UNAUTH: 'true'
             # SHARELATEX_EMAIL_SMTP_IGNORE_TLS: 'false'
             # SHARELATEX_CUSTOM_EMAIL_FOOTER: '<div>This system is run by department x</div>'
+    clsi:
+        image: shiftinv/overleaf-clsi:full
+        restart: unless-stopped
+        expose:
+            - 3013
+        volumes:
+            - clsi_data:/app/data
+        environment:
+            LISTEN_ADDRESS: '0.0.0.0'
+        logging:
+            options:
+                max-size: '10m'
+                max-file: '2'
     mongo:
         image: mongo
         restart: unless-stopped
@@ -76,5 +99,6 @@ services:
 
 volumes:
     data:
+    clsi_data:
     mongo_data:
     redis_data:
