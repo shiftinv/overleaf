@@ -16,6 +16,11 @@ parse = (option)->
 			console.error "problem parsing #{option}, invalid JSON"
 			return undefined
 
+replaceEnv = (str)->
+	return str.replace(/(?<!\\)\$\{([^}]+)\}/g, (match, envvar) ->
+		return process.env[envvar] ? match
+	)
+
 
 DATA_DIR = '/var/lib/sharelatex/data'
 TMP_DIR = '/var/lib/sharelatex/tmp'
@@ -132,12 +137,12 @@ settings =
 	siteUrl: siteUrl = process.env["SHARELATEX_SITE_URL"] or 'http://localhost'
 
 	# The name this is used to describe your ShareLaTeX Installation
-	appName: process.env["SHARELATEX_APP_NAME"] or "ShareLaTeX (Community Edition)"
+	appName: replaceEnv(process.env["SHARELATEX_APP_NAME"] or "ShareLaTeX (Community Edition)")
 
 	restrictInvitesToExistingAccounts: process.env["SHARELATEX_RESTRICT_INVITES_TO_EXISTING_ACCOUNTS"] == 'true'
 
 	nav:
-		title: process.env["SHARELATEX_NAV_TITLE"] or  process.env["SHARELATEX_APP_NAME"] or "ShareLaTeX Community Edition"
+		title: replaceEnv(process.env["SHARELATEX_NAV_TITLE"] or  process.env["SHARELATEX_APP_NAME"] or "ShareLaTeX Community Edition")
 
 
 	# The email address which users will be directed to as the main point of
@@ -202,14 +207,14 @@ settings =
 
 if process.env["SHARELATEX_LEFT_FOOTER"]?
 	try
-		settings.nav.left_footer = JSON.parse(process.env["SHARELATEX_LEFT_FOOTER"])
+		settings.nav.left_footer = JSON.parse(replaceEnv(process.env["SHARELATEX_LEFT_FOOTER"]))
 	catch e
 		console.error("could not parse SHARELATEX_LEFT_FOOTER, not valid JSON")
 
 if process.env["SHARELATEX_RIGHT_FOOTER"]?
-	settings.nav.right_footer = process.env["SHARELATEX_RIGHT_FOOTER"]
+	settings.nav.right_footer = replaceEnv(process.env["SHARELATEX_RIGHT_FOOTER"])
 	try
-		settings.nav.right_footer = JSON.parse(process.env["SHARELATEX_RIGHT_FOOTER"])
+		settings.nav.right_footer = JSON.parse(replaceEnv(process.env["SHARELATEX_RIGHT_FOOTER"]))
 	catch e
 		console.error("could not parse SHARELATEX_RIGHT_FOOTER, not valid JSON")
 
@@ -228,7 +233,7 @@ if process.env["SHARELATEX_HEADER_NAV_LINKS"]?
 
 if process.env["SHARELATEX_HEADER_EXTRAS"]?
 	try
-		settings.nav.header_extras = JSON.parse(process.env["SHARELATEX_HEADER_EXTRAS"])
+		settings.nav.header_extras = JSON.parse(replaceEnv(process.env["SHARELATEX_HEADER_EXTRAS"]))
 	catch e
 		console.error("could not parse SHARELATEX_HEADER_EXTRAS, not valid JSON")
 
