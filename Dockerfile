@@ -133,6 +133,8 @@ ENV WEB_API_USER "sharelatex"
 
 ENV SHARELATEX_APP_NAME "Overleaf Community Edition"
 
+ENV SHARELATEX_APP_VERSION "2.3.0"
+
 ENV OPTIMISE_PDF "true"
 
 
