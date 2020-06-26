@@ -82,6 +82,10 @@ RUN cd /var/www/sharelatex \
 # ---------------------------------------------
  && cd /var/www \
  && ./git-revision.sh > revisions.txt \
+# Store web service version separately (for displaying in browser) in $SHARELATEX_WEB_VERSION
+# -------------------------------------------------------------------------------------------
+ && git --git-dir="sharelatex/web/.git" rev-parse --short HEAD \
+      > /etc/container_environment/SHARELATEX_WEB_VERSION \
   \
 # Cleanup the git history
 # -------------------
