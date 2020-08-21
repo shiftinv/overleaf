@@ -3,41 +3,41 @@ module.exports =
 [{
 	name: "web",
 	repo: "https://github.com/sharelatex/web-sharelatex.git",
-	version: "db16ce118e20e91a83f87dbb228e7706b1ef8825"
+	version: "59d233a15dec0bdf565f1818c138b8e7f0e1adfe"
 }, {
 	name: "real-time",
 	repo: "https://github.com/sharelatex/real-time-sharelatex.git",
-	version: "e69e8cb2ef480fd6b68270383eacb61f735135ec"
+	version: "953c5f3ffa4e0386734f91825846db0c061baf8f"
 }, {
 	name: "document-updater",
 	repo: "https://github.com/sharelatex/document-updater-sharelatex.git",
-	version: "8969b79281fac734716f4d1ee7f4fa988af8b8e0"
+	version: "58218f476114fea96a5c910fb28a7a66d3ad5c4e"
 }, {
 	name: "filestore",
 	repo: "https://github.com/sharelatex/filestore-sharelatex.git",
-	version: "58bbb032bae42dd444d3f52f8ba828ba9f7ac3c7"
+	version: "2a35d8f58f83b3d0d14151f59c72109a6d67480e"
 }, {
 	name: "track-changes",
 	repo: "https://github.com/sharelatex/track-changes-sharelatex.git",
-	version: "9447830930d6956bc350aa85fa41742fd8467bbf"
+	version: "3ebfa296e9749944be3fb812bbfb9102f7525a7a"
 }, {
 	name: "docstore",
 	repo: "https://github.com/sharelatex/docstore-sharelatex.git",
-	version: "6a934dbd00a1b0dc2dee91d7721fe2fd21927c71"
+	version: "b81e16d8611098702203e74d38baaf28a248cfa7"
 }, {
 	name: "chat",
 	repo: "https://github.com/sharelatex/chat-sharelatex.git",
-	version: "17fc61a6fe68843a00c219bc19883cb4e57100bf"
+	version: "136779b597ed9de9c14046ecd28a15d70bb58c0c"
 }, {
 	name: "spelling",
 	repo: "https://github.com/sharelatex/spelling-sharelatex.git",
-	version: "7dcc994fb14efbee203cf52c18fa80749664dc98"
+	version: "687a93a33977ade2fe3d94f8ffa0442dba1d9ce8"
 }, {
 	name: "contacts",
 	repo: "https://github.com/sharelatex/contacts-sharelatex.git",
-	version: "ca15d3ff2703fc742bb9f96a76d621f015d9b76a"
+	version: "3845a7685c6b73b51015ea28a726fd44f27ef2aa"
 }, {
 	name: "notifications",
 	repo: "https://github.com/sharelatex/notifications-sharelatex.git",
-	version: "138cbfdda81773c6dbbacfdf66c0a257f95bd4e5"
+	version: "f83eafe2d1a5208e7a64428fbeda5cf6d10107fb"
 }]
