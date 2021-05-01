@@ -39,6 +39,12 @@ services:
             # Enables Thumbnail generation using ImageMagick
             ENABLE_CONVERSIONS: 'true'
 
+            # Disables email confirmation requirement
+            EMAIL_CONFIRMATION_DISABLED: 'false'
+
+            # An array of strings to configure additional extensions for editable files
+            ADDITIONAL_TEXT_EXTENSIONS: '[]'
+
             # Webserver config
             # SHARELATEX_SITE_URL: 'http://sharelatex.example.com'
             # SHARELATEX_BEHIND_PROXY: 'true'
