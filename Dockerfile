@@ -154,3 +154,7 @@ WORKDIR /
 
 ENTRYPOINT ["/sbin/my_init"]
 
+## Hotfix 2.6.1
+# Patch: fixes Project restore inserts bad projectId into deletedFiles
+COPY hotfix/2.6.1/document-deleter-object-id.patch ${baseDir}
+RUN cd ${baseDir} && patch -p0 < document-deleter-object-id.patch
