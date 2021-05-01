@@ -13,14 +13,18 @@ parse = (option)->
 			opt = JSON.parse(option)
 			return opt
 		catch err
-			console.error "problem parsing #{option}, invalid JSON"
-			return undefined
+			throw new Error("problem parsing #{option}, invalid JSON")
 
 replaceEnv = (str)->
 	return str.replace(/(?<!\\)\$\{([^}]+)\}/g, (match, envvar) ->
 		return process.env[envvar] ? match
 	)
 
+parseIntOrFail = (value)->
+	parsedValue = parseInt(value, 10)
+	if isNaN(parsedValue)
+		throw new Error("'#{value}' is an invalid integer")
+	return parsedValue
 
 DATA_DIR = '/var/lib/sharelatex/data'
 TMP_DIR = '/var/lib/sharelatex/tmp'
@@ -38,7 +42,7 @@ settings =
 	# Databases
 	# ---------
 
-	# ShareLaTeX's main persistant data store is MongoDB (http://www.mongodb.org/)
+	# ShareLaTeX's main persistent data store is MongoDB (http://www.mongodb.org/)
 	# Documentation about the URL connection string format can be found at:
 	#
 	#    http://docs.mongodb.org/manual/reference/connection-string/
@@ -76,7 +80,7 @@ settings =
 				# track-changes:lock
 				historyLock: ({doc_id}) -> "HistoryLock:#{doc_id}"
 				historyIndexLock: ({project_id}) -> "HistoryIndexLock:#{project_id}"
-				# track-chanegs:history
+				# track-changes:history
 				uncompressedHistoryOps: ({doc_id}) -> "UncompressedHistoryOps:#{doc_id}"
 				docsWithHistoryOps: ({project_id}) -> "DocsWithHistoryOps:#{project_id}"
 				# realtime
@@ -197,13 +201,13 @@ settings =
 		collaborators: -1
 		dropbox: true
 		versioning: true
-		compileTimeout: 180
+		compileTimeout: parseIntOrFail(process.env["COMPILE_TIMEOUT"] or 180)
 		compileGroup: "standard"
 		trackChanges: true
 		templates: true
 		references: true
 
-## OPTIONAL CONFIGERABLE SETTINGS
+## OPTIONAL CONFIGURABLE SETTINGS
 
 if process.env["SHARELATEX_LEFT_FOOTER"]?
 	try
@@ -265,10 +269,15 @@ if process.env["SHARELATEX_EMAIL_FROM_ADDRESS"]?
 			port: process.env["SHARELATEX_EMAIL_SMTP_PORT"],
 			secure: parse(process.env["SHARELATEX_EMAIL_SMTP_SECURE"])
 			ignoreTLS: parse(process.env["SHARELATEX_EMAIL_SMTP_IGNORE_TLS"])
+			name: process.env["SHARELATEX_EMAIL_SMTP_NAME"]
+			logger: process.env["SHARELATEX_EMAIL_SMTP_LOGGER"] == 'true'
 
 		textEncoding:  process.env["SHARELATEX_EMAIL_TEXT_ENCODING"]
-		templates:
+		template:
 			customFooter: process.env["SHARELATEX_CUSTOM_EMAIL_FOOTER"]
+
+	if process.env["SHARELATEX_EMAIL_AWS_SES_REGION"]?
+		settings.email.parameters.region = process.env["SHARELATEX_EMAIL_AWS_SES_REGION"]
 
 	if process.env["SHARELATEX_EMAIL_SMTP_USER"]? or process.env["SHARELATEX_EMAIL_SMTP_PASS"]?
 		settings.email.parameters.auth =
@@ -363,7 +372,7 @@ if process.env["SHARELATEX_LDAP_URL"]
 			timeout: (
 				if _ldap_timeout = process.env["SHARELATEX_LDAP_TIMEOUT"]
 					try
-						parseInt(_ldap_timeout)
+						parseIntOrFail(_ldap_timeout)
 					catch e
 						console.error "Cannot parse SHARELATEX_LDAP_TIMEOUT"
 				else
@@ -372,7 +381,7 @@ if process.env["SHARELATEX_LDAP_URL"]
 			connectTimeout: (
 				if _ldap_connect_timeout = process.env["SHARELATEX_LDAP_CONNECT_TIMEOUT"]
 					try
-						parseInt(_ldap_connect_timeout)
+						parseIntOrFail(_ldap_connect_timeout)
 					catch e
 						console.error "Cannot parse SHARELATEX_LDAP_CONNECT_TIMEOUT"
 				else
@@ -401,7 +410,7 @@ if process.env["SHARELATEX_LDAP_URL"]
 
 
 if process.env["SHARELATEX_SAML_ENTRYPOINT"]
-	# NOTE: see https://github.com/bergie/passport-saml/blob/master/README.md for docs of `server` options
+	# NOTE: see https://github.com/node-saml/passport-saml/blob/master/README.md for docs of `server` options
 	settings.externalAuth = true
 	settings.saml =
 		updateUserDetailsOnLogin: process.env["SHARELATEX_SAML_UPDATE_USER_DETAILS_ON_LOGIN"] == 'true'
@@ -415,6 +424,7 @@ if process.env["SHARELATEX_SAML_ENTRYPOINT"]
 			callbackUrl: process.env["SHARELATEX_SAML_CALLBACK_URL"]
 			issuer: process.env["SHARELATEX_SAML_ISSUER"]
 			decryptionPvk: process.env["SHARELATEX_SAML_DECRYPTION_PVK"]
+			decryptionCert: process.env["SHARELATEX_SAML_DECRYPTION_CERT"]
 			signatureAlgorithm: process.env["SHARELATEX_SAML_SIGNATURE_ALGORITHM"]
 			identifierFormat: process.env["SHARELATEX_SAML_IDENTIFIER_FORMAT"]
 			attributeConsumingServiceIndex: process.env["SHARELATEX_SAML_ATTRIBUTE_CONSUMING_SERVICE_INDEX"]
@@ -430,16 +440,16 @@ if process.env["SHARELATEX_SAML_ENTRYPOINT"]
 			acceptedClockSkewMs: (
 				if _saml_skew = process.env["SHARELATEX_SAML_ACCEPTED_CLOCK_SKEW_MS"]
 					try
-						parseInt(_saml_skew)
+						parseIntOrFail(_saml_skew)
 					catch e
 						console.error "Cannot parse SHARELATEX_SAML_ACCEPTED_CLOCK_SKEW_MS"
 				else
 					undefined
 			)
 			requestIdExpirationPeriodMs: (
-				if _saml_exiration = process.env["SHARELATEX_SAML_REQUEST_ID_EXPIRATION_PERIOD_MS"]
+				if _saml_expiration = process.env["SHARELATEX_SAML_REQUEST_ID_EXPIRATION_PERIOD_MS"]
 					try
-						parseInt(_saml_expiration)
+						parseIntOrFail(_saml_expiration)
 					catch e
 						console.error "Cannot parse SHARELATEX_SAML_REQUEST_ID_EXPIRATION_PERIOD_MS"
 				else
@@ -474,7 +484,7 @@ if process.env["SHARELATEX_SAML_ENTRYPOINT"]
 			)
 
 	# SHARELATEX_SAML_CERT cannot be empty
-	# https://github.com/bergie/passport-saml/commit/f6b1c885c0717f1083c664345556b535f217c102
+	# https://github.com/node-saml/passport-saml/commit/f6b1c885c0717f1083c664345556b535f217c102
 	if process.env["SHARELATEX_SAML_CERT"]
 		settings.saml.server.cert = process.env["SHARELATEX_SAML_CERT"]
 		settings.saml.server.privateCert = process.env["SHARELATEX_SAML_PRIVATE_CERT"]
@@ -546,4 +556,3 @@ https = require('https')
 https.globalAgent.maxSockets = 300
 
 module.exports = settings
-

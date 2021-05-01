@@ -14,14 +14,19 @@ RUN apt-get update \
       build-essential wget net-tools unzip time imagemagick optipng strace nginx git python zlib1g-dev libpcre3-dev \
       aspell aspell-* \
     \
-# install Node.JS 10
- && curl -sSL https://deb.nodesource.com/setup_10.x | bash - \
+# install Node.JS 12
+ && curl -sSL https://deb.nodesource.com/setup_12.x | bash - \
  && apt-get install -y nodejs \
     \
  && rm -rf \
       /etc/nginx/nginx.conf \
       /etc/nginx/sites-enabled/default \
  && find /var/lib/apt/lists/ /tmp/ /var/tmp/ -mindepth 1 -maxdepth 1 -exec rm -rf "{}" +
+
+# Add envsubst
+# ------------
+ADD ./vendor/envsubst /usr/bin/envsubst
+RUN chmod +x /usr/bin/envsubst
 
 # Install Grunt
 # ------------
@@ -114,13 +119,14 @@ ADD ${baseDir}/runit /etc/service
 
 # Configure nginx
 # ---------------
-ADD ${baseDir}/nginx/nginx.conf /etc/nginx/nginx.conf
+ADD ${baseDir}/nginx/nginx.conf.template /etc/nginx/templates/nginx.conf.template
 ADD ${baseDir}/nginx/sharelatex.conf /etc/nginx/sites-enabled/sharelatex.conf
 
 
 # Configure log rotation
 # ----------------------
 ADD ${baseDir}/logrotate/sharelatex /etc/logrotate.d/sharelatex
+RUN chmod 644 /etc/logrotate.d/sharelatex
 
 
 # Copy Phusion Image startup scripts to its location
