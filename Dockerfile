@@ -158,3 +158,8 @@ ENTRYPOINT ["/sbin/my_init"]
 # Patch: fixes Project restore inserts bad projectId into deletedFiles
 COPY hotfix/2.6.1/document-deleter-object-id.patch ${baseDir}
 RUN cd ${baseDir} && patch -p0 < document-deleter-object-id.patch
+
+## Hotfix 2.6.2
+# Patch: fixes overleaf.com onboarding email being sent in CE/SP
+COPY hotfix/2.6.2/onboarding-email.patch ${baseDir}
+RUN cd ${baseDir} && patch -p0 < onboarding-email.patch
